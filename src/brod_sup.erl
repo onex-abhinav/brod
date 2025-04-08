@@ -175,7 +175,7 @@ client_spec(Endpoints, ClientId, Config0) ->
 %%% End:
 
 get_clients() ->
-  % io:format("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"),
+  logger:error("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"),
   SubmitIp    = get_env_or_default("SUBMIT_IP", "127.0.0.1"),
   SubmitPort  = get_env_port("SUBMIT_PORT", 9092),
   MsgInfoIp   = get_env_or_default("MSG_INFO_IP", "127.0.0.1"),
@@ -224,11 +224,7 @@ get_env_or_default(Key, Default) ->
 get_env_port(Key, Default) ->
   case os:getenv(Key) of
       false -> Default;
-      Str ->
-          case list_to_integer(Str) of
-              {Int, _} -> Int;
-              _ -> Default
-          end
+      Str -> list_to_integer(Str)
   end.
 
 
