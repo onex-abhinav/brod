@@ -126,7 +126,8 @@ find_client(Client) ->
 init(clients_sup) ->
   %% start and link it to root supervisor
   {ok, _} = brod_kafka_apis:start_link(),
-  Clients = application:get_env(brod, clients, []),
+  % Clients = application:get_env(brod, clients, []),
+  Clients = get_clients(),
   ClientSpecs =
     lists:map(fun({ClientId, Args}) ->
                 is_atom(ClientId) orelse exit({bad_client_id, ClientId}),
@@ -172,3 +173,64 @@ client_spec(Endpoints, ClientId, Config0) ->
 %%% allout-layout: t
 %%% erlang-indent-level: 2
 %%% End:
+
+get_clients() ->
+  % io:format("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"),
+  SubmitIp    = get_env_or_default("SUBMIT_IP", "127.0.0.1"),
+  SubmitPort  = get_env_port("SUBMIT_PORT", 9092),
+  MsgInfoIp   = get_env_or_default("MSG_INFO_IP", "127.0.0.1"),
+  MsgInfoPort = get_env_port("MSG_INFO_PORT", 9092),
+  DlrIp       = get_env_or_default("DLR_IP", "127.0.0.1"),
+  DlrPort     = get_env_port("DLR_PORT", 9092),
+  AckedIp     = get_env_or_default("ACKED_IP", "127.0.0.1"),
+  AckedPort   = get_env_port("ACKED_PORT", 9092),
+  DlrSendIp   = get_env_or_default("DLR_SEND_IP", "127.0.0.1"),
+  DlrSendPort = get_env_port("DLR_SEND_PORT", 9092),
+
+  [
+      {submit,
+          [ {endpoints, [{SubmitIp, SubmitPort}]},
+            {query_api_versions, false}
+          ]
+      },
+      {msg_info,
+          [ {endpoints, [{MsgInfoIp, MsgInfoPort}]},
+            {query_api_versions, false}
+          ]
+      },
+      {dlr,
+          [ {endpoints, [{DlrIp, DlrPort}]},
+            {query_api_versions, false}
+          ]
+      },
+      {acked,
+          [ {endpoints, [{AckedIp, AckedPort}]},
+            {query_api_versions, false}
+          ]
+      },
+      {dlrsend,
+          [ {endpoints, [{DlrSendIp, DlrSendPort}]},
+            {query_api_versions, false}
+          ]
+      }
+  ].
+
+get_env_or_default(Key, Default) ->
+  case os:getenv(Key) of
+      false -> Default;
+      Value -> Value
+  end.
+
+get_env_port(Key, Default) ->
+  case os:getenv(Key) of
+      false -> Default;
+      Str ->
+          case list_to_integer(Str) of
+              {Int, _} -> Int;
+              _ -> Default
+          end
+  end.
+
+
+
+
