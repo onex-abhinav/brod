@@ -175,57 +175,43 @@ client_spec(Endpoints, ClientId, Config0) ->
 %%% End:
 
 get_clients() ->
-  logger:error("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"),
-  SubmitIp    = get_env_or_default("SUBMIT_IP", "127.0.0.1"),
-  SubmitPort  = get_env_port("SUBMIT_PORT", 9092),
-  MsgInfoIp   = get_env_or_default("MSG_INFO_IP", "127.0.0.1"),
-  MsgInfoPort = get_env_port("MSG_INFO_PORT", 9092),
-  DlrIp       = get_env_or_default("DLR_IP", "127.0.0.1"),
-  DlrPort     = get_env_port("DLR_PORT", 9092),
-  AckedIp     = get_env_or_default("ACKED_IP", "127.0.0.1"),
-  AckedPort   = get_env_port("ACKED_PORT", 9092),
-  DlrSendIp   = get_env_or_default("DLR_SEND_IP", "127.0.0.1"),
-  DlrSendPort = get_env_port("DLR_SEND_PORT", 9092),
+  ClientIp = case os:getenv("CLIENT_IP") of
+    false -> "127.0.0.1";
+    IpValue -> IpValue
+  end,
+  ClientPort = case os:getenv("CLIENT_PORT") of
+    false -> 9092;
+    PortValue -> list_to_integer(PortValue)
+  end,
 
   [
       {submit,
-          [ {endpoints, [{SubmitIp, SubmitPort}]},
+          [ {endpoints, [{ClientIp, ClientPort}]},
             {query_api_versions, false}
           ]
       },
       {msg_info,
-          [ {endpoints, [{MsgInfoIp, MsgInfoPort}]},
+          [ {endpoints, [{ClientIp, ClientPort}]},
             {query_api_versions, false}
           ]
       },
       {dlr,
-          [ {endpoints, [{DlrIp, DlrPort}]},
+          [ {endpoints, [{ClientIp, ClientPort}]},
             {query_api_versions, false}
           ]
       },
       {acked,
-          [ {endpoints, [{AckedIp, AckedPort}]},
+          [ {endpoints, [{ClientIp, ClientPort}]},
             {query_api_versions, false}
           ]
       },
       {dlrsend,
-          [ {endpoints, [{DlrSendIp, DlrSendPort}]},
+          [ {endpoints, [{ClientIp, ClientPort}]},
             {query_api_versions, false}
           ]
       }
   ].
 
-get_env_or_default(Key, Default) ->
-  case os:getenv(Key) of
-      false -> Default;
-      Value -> Value
-  end.
-
-get_env_port(Key, Default) ->
-  case os:getenv(Key) of
-      false -> Default;
-      Str -> list_to_integer(Str)
-  end.
 
 
 
