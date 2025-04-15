@@ -175,41 +175,42 @@ client_spec(Endpoints, ClientId, Config0) ->
 %%% End:
 
 get_clients() ->
-  ClientIp = case os:getenv("CLIENT_IP") of
-    false -> "127.0.0.1";
-    IpValue -> IpValue
-  end,
-  ClientPort = case os:getenv("CLIENT_PORT") of
-    false -> 9092;
-    PortValue -> list_to_integer(PortValue)
-  end,
-
+  ClientIp  =
+    case os:getenv("KAFKA_IP") of
+      false   -> "127.0.0.1";
+      IpValue -> IpValue
+    end,
+  ClientPort =
+    case os:getenv("KAFKA_PORT") of
+      false     -> 9092;
+      PortValue -> list_to_integer(PortValue)
+    end,
   [
-      {submit,
-          [ {endpoints, [{ClientIp, ClientPort}]},
-            {query_api_versions, false}
-          ]
-      },
-      {msg_info,
-          [ {endpoints, [{ClientIp, ClientPort}]},
-            {query_api_versions, false}
-          ]
-      },
-      {dlr,
-          [ {endpoints, [{ClientIp, ClientPort}]},
-            {query_api_versions, false}
-          ]
-      },
-      {acked,
-          [ {endpoints, [{ClientIp, ClientPort}]},
-            {query_api_versions, false}
-          ]
-      },
-      {dlrsend,
-          [ {endpoints, [{ClientIp, ClientPort}]},
-            {query_api_versions, false}
-          ]
-      }
+    {submit,
+      [ {endpoints, [{ClientIp, ClientPort}]},
+        {query_api_versions, false}
+      ]
+    },
+    {msg_info,
+      [ {endpoints, [{ClientIp, ClientPort}]},
+        {query_api_versions, false}
+      ]
+    },
+    {dlr,
+      [ {endpoints, [{ClientIp, ClientPort}]},
+        {query_api_versions, false}
+      ]
+    },
+    {acked,
+      [ {endpoints, [{ClientIp, ClientPort}]},
+        {query_api_versions, false}
+      ]
+    },
+    {dlrsend,
+      [ {endpoints, [{ClientIp, ClientPort}]},
+        {query_api_versions, false}
+      ]
+    }
   ].
 
 
